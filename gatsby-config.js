@@ -53,6 +53,43 @@ module.exports = {
         icon: "src/images/icon.png",
       },
     },
+      {
+      resolve: `gatsby-plugin-feed`,
+      options: {
+        feeds: [
+          {
+            title: `Megan Sullivan's Blog RSS Feed`,
+            output: `/rss.xml`,
+            serialize: ({ query: { site, allMdx } }) => {
+              return allMdx.nodes.map(node => {
+                return Object.assign({}, node.frontmatter, {
+                  url: `${site.siteMetadata.siteUrl}/blog/${node.slug}`,
+                  guid: `${site.siteMetadata.siteUrl}/blog/${node.slug}`,
+                })
+              })
+            },
+            query: `
+              {
+                allMdx(
+                  sort: { order: DESC, fields: [frontmatter___date] },
+                ) {
+                  nodes {
+                    slug
+                    frontmatter {
+                      title
+                      date
+                      description
+                    }
+                  }
+                }
+              }
+            `,
+          }
+        ],
+      }
+    },
+  ],
+},
     `gatsby-plugin-sass`,  
     `gatsby-plugin-react-helmet`,
     `gatsby-plugin-netlify-cms`,
@@ -62,3 +99,4 @@ module.exports = {
     `gatsby-plugin-offline`,
   ],
 }
+
